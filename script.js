@@ -656,6 +656,7 @@ let entered = false;
 let zoomed = false;
 let navIntroActive = false;
 let navIntroTimers = [];
+let navIntroRAF = null;
 
 function treeH() { return navTree.offsetHeight; }
 function viewH() { return viewNav.clientHeight; }
@@ -702,6 +703,8 @@ function enterNav() {
   navIntroActive = false;
   navIntroTimers.forEach(clearTimeout);
   navIntroTimers = [];
+  if (navIntroRAF) cancelAnimationFrame(navIntroRAF);
+  navIntroRAF = null;
   entered = true;
   zoomed = true;
   viewNav.classList.add("entered", "zoomed");
@@ -726,8 +729,21 @@ function runNavIntro() {
     // 先提交树冠起始帧，避免浏览器把起止状态合并成一次跳转。
     void treeWrap.offsetHeight;
 
+    const glideToRoot = () => {
+      const rootY = V - H;
+      const startedAt = performance.now();
+      const duration = 5800;
+      const glide = (now) => {
+        if (!navIntroActive) return;
+        const p = Math.min(1, (now - startedAt) / duration);
+        const eased = p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+        treeWrap.style.transform = `translate(0px, ${rootY * eased}px) scale(1)`;
+        if (p < 1) navIntroRAF = requestAnimationFrame(glide);
+      };
+      navIntroRAF = requestAnimationFrame(glide);
+    };
     navIntroTimers=[
-      setTimeout(setRootLens,900),
+      setTimeout(glideToRoot,900),
       setTimeout(enterNav,7000),
     ];
   };
@@ -735,7 +751,10 @@ function runNavIntro() {
 }
 function cancelNavIntro(){
   if(!navIntroActive)return;
-  navIntroTimers.forEach(clearTimeout);navIntroTimers=[];enterNav();
+  navIntroTimers.forEach(clearTimeout);navIntroTimers=[];
+  if(navIntroRAF)cancelAnimationFrame(navIntroRAF);
+  navIntroRAF=null;
+  enterNav();
 }
 
 const coverEnter = document.getElementById("cover-enter");
