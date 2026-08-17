@@ -723,6 +723,8 @@ function runNavIntro() {
     // 保持大树铺满网页：从树冠单向巡视到树根，不缩小，也不折返。
     treeWrap.style.transition = "none";
     treeWrap.style.transform = "translate(0px, 0px) scale(1)";
+    // 先提交树冠起始帧，避免浏览器把起止状态合并成一次跳转。
+    void treeWrap.offsetHeight;
 
     navIntroTimers=[
       setTimeout(setRootLens,900),
