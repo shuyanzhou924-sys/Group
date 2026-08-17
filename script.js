@@ -686,7 +686,7 @@ function setGlobalLens() {
 
 function setRootLens() {
   const H = treeH(), V = viewH();
-  treeWrap.style.transition = "transform 4.1s cubic-bezier(.42,0,.18,1)";
+  treeWrap.style.transition = "transform 5.8s cubic-bezier(.42,0,.18,1)";
   treeWrap.style.transform = `translate(0px, ${V - H}px) scale(1)`;
 }
 
@@ -720,12 +720,13 @@ function runNavIntro() {
     const H = treeH(), V = viewH();
     if (!H) { requestAnimationFrame(waitTree); return; }
 
-    // 入场先完整看见整棵树，再由全景平稳推进到树根。
-    setGlobalLens();
+    // 保持大树铺满网页：从树冠单向巡视到树根，不缩小，也不折返。
+    treeWrap.style.transition = "none";
+    treeWrap.style.transform = "translate(0px, 0px) scale(1)";
 
     navIntroTimers=[
-      setTimeout(setRootLens,2400),
-      setTimeout(enterNav,6800),
+      setTimeout(setRootLens,900),
+      setTimeout(enterNav,7000),
     ];
   };
   waitTree();
