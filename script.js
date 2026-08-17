@@ -233,15 +233,42 @@ function renderGroup() {
   document.getElementById("group-slogan").textContent = g.slogan;
   document.getElementById("group-intro").textContent = g.intro;
   document.getElementById("group-teams").innerHTML = g.teams
-    .map((t, i) => `<span class="chip" data-team="${i}" role="button" tabindex="0">🏠 ${t}</span>`)
+    .map((name, i) => {
+      const team = DATA.teams[i];
+      return `<button class="root-node root-node-${i + 1}" data-team="${i}" type="button" style="--team-color:${team.color}">
+        <span class="root-node-index">0${i + 1}</span>
+        <span class="root-node-name">${name}</span>
+        <span class="root-node-duty">${team.duty}</span>
+        <span class="root-node-arrow">进入树屋 ↗</span>
+      </button>`;
+    })
     .join("");
-  document.querySelectorAll("#group-teams .chip").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const idx = Number(chip.dataset.team);
+  document.querySelectorAll("#group-teams .root-node").forEach((node) => {
+    node.addEventListener("click", () => {
+      const idx = Number(node.dataset.team);
       playDoorTransition(idx);
     });
   });
+
+  const archive = document.getElementById("roots-archive");
+  const story = document.getElementById("root-story");
+  const core = document.getElementById("root-core");
+  archive.classList.remove("is-awake", "story-open");
+  story.setAttribute("aria-hidden", "true");
+  core.setAttribute("aria-expanded", "false");
+  core.querySelector("strong").textContent = "触碰生长";
+  window.setTimeout(() => archive.classList.add("is-awake"), 80);
 }
+
+const rootCore = document.getElementById("root-core");
+rootCore.addEventListener("click", () => {
+  const archive = document.getElementById("roots-archive");
+  const story = document.getElementById("root-story");
+  const open = archive.classList.toggle("story-open");
+  rootCore.setAttribute("aria-expanded", String(open));
+  story.setAttribute("aria-hidden", String(!open));
+  rootCore.querySelector("strong").textContent = open ? "根心已亮" : "触碰生长";
+});
 
 /* ====== 渲染：子团队介绍 ====== */
 function renderTeam(idx) {
@@ -526,7 +553,8 @@ function updateSnail(s, dt) {
   const step = s.speed * dt;
   s.x += Math.sign(dx) * Math.min(step, d);
   s.y = s.floorY;
-  s.facing = dx < 0 ? -1 : 1;
+  // 所有蜗牛原图的头部默认朝左：向右走时才需要镜像，避免倒退。
+  s.facing = dx < 0 ? 1 : -1;
 }
 
 function roomLoop(now) {
