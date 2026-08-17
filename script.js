@@ -686,7 +686,7 @@ function setGlobalLens() {
 
 function setRootLens() {
   const H = treeH(), V = viewH();
-  treeWrap.style.transition = "transform 1.8s cubic-bezier(.4,0,.2,1)";
+  treeWrap.style.transition = "transform 4.1s cubic-bezier(.42,0,.18,1)";
   treeWrap.style.transform = `translate(0px, ${V - H}px) scale(1)`;
 }
 
@@ -720,15 +720,12 @@ function runNavIntro() {
     const H = treeH(), V = viewH();
     if (!H) { requestAnimationFrame(waitTree); return; }
 
-    treeWrap.style.transition = "none";
-    treeWrap.style.transform = `translate(0px, ${V - H}px) scale(1)`;
+    // 入场先完整看见整棵树，再由全景平稳推进到树根。
+    setGlobalLens();
 
-    const rootY=V-H;
-    const previewY=rootY*.48;
     navIntroTimers=[
-      setTimeout(()=>{treeWrap.style.transition="transform 6.2s cubic-bezier(.45,0,.25,1)";treeWrap.style.transform=`translate(0px, ${previewY}px) scale(1)`;},650),
-      setTimeout(()=>{treeWrap.style.transition="transform 5.6s cubic-bezier(.45,0,.25,1)";treeWrap.style.transform=`translate(0px, ${rootY}px) scale(1)`;},7250),
-      setTimeout(enterNav,12950),
+      setTimeout(setRootLens,2400),
+      setTimeout(enterNav,6800),
     ];
   };
   waitTree();
