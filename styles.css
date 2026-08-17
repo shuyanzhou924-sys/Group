@@ -113,10 +113,10 @@ html, body {
   height: 120%;
   overflow: visible;
   will-change: transform, opacity;
-  transition: transform 1.65s cubic-bezier(.55, 0, .18, 1), opacity 1.35s ease, filter 1.5s ease;
+  transition: left 1.65s cubic-bezier(.55, 0, .18, 1), right 1.65s cubic-bezier(.55, 0, .18, 1), opacity 1.35s ease, filter 1.5s ease;
 }
-.mist-half.left { left: 0; }
-.mist-half.right { right: 0; }
+.mist-half.left { left: -1%; }
+.mist-half.right { right: -1%; }
 .mist-cloud {
   position: absolute;
   top: 0;
@@ -134,8 +134,8 @@ html, body {
 .mist-half.right .mist-cloud { right: 0; }
 
 #view-cover.parted .cover-mist::before { opacity: 0; filter: blur(12px); }
-#view-cover.parted .mist-half.left  { transform: translateX(-112%) scale(1.06); opacity: 0; filter: blur(20px); }
-#view-cover.parted .mist-half.right { transform: translateX(112%) scale(1.06); opacity: 0; filter: blur(20px); }
+#view-cover.parted .mist-half.left  { left: -70%; opacity: 0; filter: blur(20px); }
+#view-cover.parted .mist-half.right { right: -70%; opacity: 0; filter: blur(20px); }
 @keyframes mistBreathe {
   0%,100% { transform: translate3d(0,0,0) scale(1); }
   50% { transform: translate3d(0,-10px,0) scale(1.025); }
